@@ -60,7 +60,7 @@ jobs:
   results_to_security_tab:
     needs: pipeline_scan
     runs-on: ubuntu-latest
-    if: ${{ inputs.enable_security_report && always()}}
+    if: ${{ inputs.enable_security_report && failure()}}
     name: Send report to Security tab
     steps:
       - name: Get scan results
