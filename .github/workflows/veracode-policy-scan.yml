@@ -53,7 +53,7 @@ jobs:
   import-issues:
     needs: policy_scan
 
-    if: always()
+    if: ${{ inputs.create_issue && failure()}}
     runs-on: ubuntu-latest
     steps:
       - name: Get flaw file
