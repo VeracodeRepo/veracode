@@ -61,7 +61,6 @@ jobs:
         with:
           name: 'policy-flaws'
           path: /tmp
-
       - name: Import flaws as issues
         uses: veracode/veracode-flaws-to-issues@addWorkflowAppSupport
         with:
