@@ -78,3 +78,22 @@ jobs:
           commitSHA: ${{ inputs.sha }}
           ref: ${{ inputs.ref }}
           githubToken: ${{ inputs.token }}
+
+# This step will import the flaws from the step above
+  import-issues:
+    needs: pipeline_scan
+    if: always()
+    runs-on: ubuntu-latest
+    name: Send report to issue tab
+    steps:
+      - name: Get scan results
+        uses: actions/download-artifact@v3
+        with:
+          name: 'Veracode Pipeline-Scan Results'
+      - name: Import flaws as issues
+        uses: veracode/veracode-flaws-to-issues@addWorkflowAppSupport
+        with:
+          scan-results-json: 'filtered_results.json'
+          repo_owner: ${{ github.event.client_payload.repository.owner }}
+          repo_name: ${{ github.event.client_payload.repository.name }}
+          github-token: ${{ github.event.client_payload.token }}
