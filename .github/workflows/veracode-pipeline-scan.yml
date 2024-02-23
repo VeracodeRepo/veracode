@@ -82,7 +82,7 @@ jobs:
 # This step will import the flaws from the step above
   import-issues:
     needs: pipeline_scan
-    if: always()
+    if: ${{ inputs.create_issue && failure()}}
     runs-on: ubuntu-latest
     name: Send report to issue tab
     steps:
