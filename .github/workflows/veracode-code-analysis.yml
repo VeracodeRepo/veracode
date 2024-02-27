@@ -45,7 +45,7 @@ jobs:
           check_run_id: ${{ needs.register.outputs.run_id }}
  
   build:
-    needs: register
+    needs: validations
     uses: ./.github/workflows/veracode-build-artifact-for-scanning.yml
     with:
       repository: ${{ github.event.client_payload.repository.full_name }}
