@@ -12,6 +12,15 @@ on:
       modules_to_scan:
         required: true
         type: string
+      owner:
+        required: true
+        type: string
+      repo:
+        required: true
+        type: string
+      token:
+        required: true
+        type: string
   
 jobs:
   policy_scan:
@@ -65,7 +74,6 @@ jobs:
         uses: veracode/veracode-flaws-to-issues@addWorkflowAppSupport
         with:
           scan-results-json: '/tmp/policy_flaws.json'
-          repo_owner: ${{ github.event.client_payload.repository.owner }}
-          repo_name: ${{ github.event.client_payload.repository.name }}
-          github-token: ${{ github.event.client_payload.token }}
-        
+          repo_owner: ${{ inputs.owner }}
+          repo_name: ${{ inputs.repo }}
+          github-token: ${{ inputs.token }}
