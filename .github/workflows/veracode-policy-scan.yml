@@ -21,6 +21,9 @@ on:
       token:
         required: true
         type: string
+      create_issue:
+        required: true
+        type: boolean
   
 jobs:
   policy_scan:
@@ -62,7 +65,7 @@ jobs:
   import-issues:
     needs: policy_scan
 
-    if: ${{ inputs.create_issue && failure()}}
+    if: ${{ inputs.create_issue && failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Get flaw file
