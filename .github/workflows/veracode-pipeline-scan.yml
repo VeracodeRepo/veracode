@@ -24,6 +24,9 @@ on:
       enable_security_report:
         required: true
         type: boolean
+      create_issue:
+        required: true
+        type: boolean
 
   
 jobs:
