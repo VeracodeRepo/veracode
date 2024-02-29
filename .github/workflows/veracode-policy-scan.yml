@@ -18,13 +18,23 @@ on:
       repo:
         required: true
         type: string
+      sha:
+        required: true
+        type: string
       token:
         required: true
         type: string
+      ref:
+        required: true
+        type: string
+      security_report_enabled:
+        required: true
+        type: boolean
       create_issue:
         required: true
         type: boolean
-  
+
+
 jobs:
   policy_scan:
     runs-on: ubuntu-latest
@@ -61,6 +71,7 @@ jobs:
           scantimeout: 15
           include: ${{ inputs.modules_to_scan }}
           failbuild: true
+
 # This step will import the flaws from the step above
   create-issues:
     needs: policy_scan
@@ -80,3 +91,27 @@ jobs:
           repo_owner: ${{ inputs.owner }}
           repo_name: ${{ inputs.repo }}
           github-token: ${{ inputs.token }}
+  
+  results_to_security_tab:
+    needs: policy_scan
+    runs-on: ubuntu-latest
+    if: ${{ failure() && inputs.security_report_enabled }}
+    name: Send policy scan report to Security tab
+    steps:
+      - name: Get scan results
+        uses: actions/download-artifact@v3
+        with:
+          name: policy-flaws
+          path: /tmp
+      - name: Convert policy scan output to SARIF format
+        id: convert
+        uses: Veracode/veracode-pipeline-scan-results-to-sarif@feature/DXS_254
+        with:
+          scan-type: policy
+          results-json: '/tmp/policy_flaws.json'
+          output-results-sarif: veracode-results.sarif
+          repo_owner: ${{ inputs.owner }}
+          repo_name: ${{ inputs.repo }}
+          commitSHA: ${{ inputs.sha }}
+          ref: ${{ inputs.ref }}
+          githubToken: ${{ inputs.token }}

@@ -26,9 +26,26 @@ jobs:
       event_type: ${{ github.event.client_payload.event_type }}
       github_token: ${{ github.event.client_payload.token }}
       run_id: ${{ github.run_id }}
-        
-  build:
+
+  validations:
     needs: register
+    runs-on: ubuntu-latest
+    name: Validations
+    steps:
+      - name: Verify Veracode API credentials
+        id: verify_api_creds
+        uses: veracode/github-actions-integration-helper@feature/DXS-124
+        with:
+          action: validateVeracodeApiCreds
+          token: ${{ github.event.client_payload.token }}
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+          appname: ${{ github.event.client_payload.profile_name }}
+          source_repository: ${{ github.event.client_payload.repository.full_name }}
+          check_run_id: ${{ needs.register.outputs.run_id }}
+ 
+  build:
+    needs: validations
     uses: ./.github/workflows/veracode-build-artifact-for-scanning.yml
     with:
       repository: ${{ github.event.client_payload.repository.full_name }}
@@ -44,7 +61,7 @@ jobs:
     uses: ./.github/workflows/veracode-pipeline-scan.yml
     with:
       policy_name: ${{ github.event.client_payload.policy_name }}
-      enable_security_report: ${{ github.event.client_payload.enable_security_report }}
+      security_report_enabled: ${{ github.event.client_payload.security_report_enabled }}
       owner: ${{ github.event.client_payload.repository.owner }}
       repo: ${{ github.event.client_payload.repository.name }}
       sha: ${{ github.event.client_payload.sha }}
@@ -63,6 +80,9 @@ jobs:
       modules_to_scan: ${{ github.event.client_payload.modules_to_scan }}
       owner: ${{ github.event.client_payload.repository.owner }}
       repo: ${{ github.event.client_payload.repository.name }}
+      sha: ${{ github.event.client_payload.sha }}
       token: ${{ github.event.client_payload.token }}
+      ref: ${{ github.event.client_payload.ref }}
       create_issue: ${{ github.event.client_payload.create_issue }}
+      security_report_enabled: ${{ github.event.client_payload.security_report_enabled }}
     secrets: inherit
