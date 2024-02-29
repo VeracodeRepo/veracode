@@ -62,7 +62,7 @@ jobs:
           include: ${{ inputs.modules_to_scan }}
           failbuild: true
 # This step will import the flaws from the step above
-  import-issues:
+  create-issues:
     needs: policy_scan
 
     if: ${{ inputs.create_issue && failure() }}
@@ -73,7 +73,7 @@ jobs:
         with:
           name: 'policy-flaws'
           path: /tmp
-      - name: Import flaws as issues
+      - name: Create flaws as issues
         uses: veracode/veracode-flaws-to-issues@addWorkflowAppSupport
         with:
           scan-results-json: '/tmp/policy_flaws.json'
