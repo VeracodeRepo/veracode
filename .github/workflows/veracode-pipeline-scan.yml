@@ -24,6 +24,9 @@ on:
       security_report_enabled:
         required: true
         type: boolean
+      create_issue:
+        required: true
+        type: boolean
 
   
 jobs:
@@ -78,3 +81,22 @@ jobs:
           commitSHA: ${{ inputs.sha }}
           ref: ${{ inputs.ref }}
           githubToken: ${{ inputs.token }}
+
+# This step will import the flaws from the step above
+  create-issues:
+    needs: pipeline_scan
+    if: ${{ inputs.create_issue && failure()}}
+    runs-on: ubuntu-latest
+    name: Send report to issue tab
+    steps:
+      - name: Get scan results
+        uses: actions/download-artifact@v3
+        with:
+          name: 'Veracode Pipeline-Scan Results'
+      - name: Create flaws as issues
+        uses: veracode/veracode-flaws-to-issues@addWorkflowAppSupport
+        with:
+          scan-results-json: 'filtered_results.json'
+          repo_owner: ${{ inputs.owner }}
+          repo_name: ${{ inputs.repo }}
+          github-token: ${{ inputs.token }}

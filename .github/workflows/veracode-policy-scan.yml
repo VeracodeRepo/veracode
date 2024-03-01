@@ -30,6 +30,10 @@ on:
       security_report_enabled:
         required: true
         type: boolean
+      create_issue:
+        required: true
+        type: boolean
+
 
 jobs:
   policy_scan:
@@ -67,6 +71,26 @@ jobs:
           scantimeout: 15
           include: ${{ inputs.modules_to_scan }}
           failbuild: true
+
+# This step will import the flaws from the step above
+  create-issues:
+    needs: policy_scan
+
+    if: ${{ inputs.create_issue && failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get flaw file
+        uses: actions/download-artifact@v3
+        with:
+          name: 'policy-flaws'
+          path: /tmp
+      - name: Create flaws as issues
+        uses: veracode/veracode-flaws-to-issues@addWorkflowAppSupport
+        with:
+          scan-results-json: '/tmp/policy_flaws.json'
+          repo_owner: ${{ inputs.owner }}
+          repo_name: ${{ inputs.repo }}
+          github-token: ${{ inputs.token }}
   
   results_to_security_tab:
     needs: policy_scan
