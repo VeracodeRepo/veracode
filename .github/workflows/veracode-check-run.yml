@@ -11,11 +11,11 @@ on:
         required: true
         type: string
       repositroy_owner: 
-        description: 'repositroy_owner of original commit (provided by GitHub app via `github.event.client_payload.repository.owner`)'
+        description: 'repositroy_owner of original commit (provided by GitHub app via `github.event.client_payload.app_payload.repository.owner`)'
         required: true
         type: string
       repositroy_name: 
-        description: 'repositroy_name of original commit (provided by GitHub app via `github.event.client_payload.repository.name`)'
+        description: 'repositroy_name of original commit (provided by GitHub app via `github.event.client_payload.app_payload.repository.name`)'
         required: true
         type: string
       check_run_name: 
@@ -23,15 +23,15 @@ on:
         required: true
         type: string
       head_sha: 
-        description: 'head_sha of original commit (provided by GitHub app via `github.event.client_payload.sha`)'
+        description: 'head_sha of original commit (provided by GitHub app via `github.event.client_payload.app_payload.sha`)'
         required: true
         type: string
       github_token: 
-        description: 'github_token is a token (provided by GitHub app via `github.event.client_payload.token`)'
+        description: 'github_token is a token (provided by GitHub app via `github.event.client_payload.app_payload.token`)'
         required: true
         type: string
       event_type:
-        description: 'event_type triggered by the GitHub App (provided by GitHub app via `github.event.client_payload.event_type`)'
+        description: 'event_type triggered by the GitHub App (provided by GitHub app via `github.event.client_payload.app_payload.event_type`)'
         required: true
         type: string
 jobs:

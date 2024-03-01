@@ -1,9 +1,9 @@
 name: Veracode Static Code Analysis
 
-run-name: Static Code Analysis - ${{ github.event.client_payload.repository.name }}
+run-name: Static Code Analysis - ${{ github.event.client_payload.app_payload.repository.name }}
 
 concurrency:
-  group: ${{ github.event.client_payload.event_type }}-${{ github.event.client_payload.repository.name }}-${{ github.event.client_payload.branch }}
+  group: ${{ github.event.client_payload.app_payload.event_type }}-${{ github.event.client_payload.app_payload.repository.name }}-${{ github.event.client_payload.app_payload.branch }}
   cancel-in-progress: true
 
 on:
@@ -24,11 +24,11 @@ jobs:
     uses: ./.github/workflows/veracode-check-run.yml
     with:
       check_run_name: ${{ github.workflow }}
-      head_sha: ${{ github.event.client_payload.sha }}
-      repositroy_owner: ${{ github.event.client_payload.repository.owner }}
-      repositroy_name: ${{ github.event.client_payload.repository.name }}
-      event_type: ${{ github.event.client_payload.event_type }}
-      github_token: ${{ github.event.client_payload.token }}
+      head_sha: ${{ github.event.client_payload.app_payload.sha }}
+      repositroy_owner: ${{ github.event.client_payload.app_payload.repository.owner }}
+      repositroy_name: ${{ github.event.client_payload.app_payload.repository.name }}
+      event_type: ${{ github.event.client_payload.app_payload.event_type }}
+      github_token: ${{ github.event.client_payload.app_payload.token }}
       run_id: ${{ github.run_id }}
 
   validations:
@@ -41,20 +41,20 @@ jobs:
         uses: veracode/github-actions-integration-helper@feature/DXS-124
         with:
           action: validateVeracodeApiCreds
-          token: ${{ github.event.client_payload.token }}
+          token: ${{ github.event.client_payload.app_payload.token }}
           vid: ${{ secrets.VERACODE_API_ID }}
           vkey: ${{ secrets.VERACODE_API_KEY }}
-          appname: ${{ github.event.client_payload.profile_name }}
-          source_repository: ${{ github.event.client_payload.repository.full_name }}
+          appname: ${{ github.event.client_payload.app_payload.profile_name }}
+          source_repository: ${{ github.event.client_payload.app_payload.repository.full_name }}
           check_run_id: ${{ needs.register.outputs.run_id }}
  
   build:
     needs: validations
     uses: ./.github/workflows/veracode-build-artifact-for-scanning.yml
     with:
-      repository: ${{ github.event.client_payload.repository.full_name }}
-      ref: ${{ github.event.client_payload.sha }}
-      token: ${{ github.event.client_payload.token }}
+      repository: ${{ github.event.client_payload.app_payload.repository.full_name }}
+      ref: ${{ github.event.client_payload.app_payload.sha }}
+      token: ${{ github.event.client_payload.app_payload.token }}
       event_name: ${{ github.event.action }}
 
 
@@ -64,14 +64,14 @@ jobs:
     if: contains(github.event.action, 'pipeline')
     uses: ./.github/workflows/veracode-pipeline-scan.yml
     with:
-      policy_name: ${{ github.event.client_payload.policy_name }}
-      security_report_enabled: ${{ github.event.client_payload.security_report_enabled }}
-      owner: ${{ github.event.client_payload.repository.owner }}
-      repo: ${{ github.event.client_payload.repository.name }}
-      sha: ${{ github.event.client_payload.sha }}
-      token: ${{ github.event.client_payload.token }}
-      ref: ${{ github.event.client_payload.ref }}
-      create_issue: ${{ github.event.client_payload.create_issue }}
+      policy_name: ${{ github.event.client_payload.app_payload.policy_name }}
+      security_report_enabled: ${{ github.event.client_payload.app_payload.security_report_enabled }}
+      owner: ${{ github.event.client_payload.app_payload.repository.owner }}
+      repo: ${{ github.event.client_payload.app_payload.repository.name }}
+      sha: ${{ github.event.client_payload.app_payload.sha }}
+      token: ${{ github.event.client_payload.app_payload.token }}
+      ref: ${{ github.event.client_payload.app_payload.ref }}
+      create_issue: ${{ github.event.client_payload.app_payload.create_issue }}
     secrets: inherit
     
   policy_scan:
@@ -79,14 +79,14 @@ jobs:
     if: contains(github.event.action, 'policy')
     uses: ./.github/workflows/veracode-policy-scan.yml
     with:
-      profile_name: ${{ github.event.client_payload.profile_name }}
-      policy_name: ${{ github.event.client_payload.policy_name }}
-      modules_to_scan: ${{ github.event.client_payload.modules_to_scan }}
-      owner: ${{ github.event.client_payload.repository.owner }}
-      repo: ${{ github.event.client_payload.repository.name }}
-      sha: ${{ github.event.client_payload.sha }}
-      token: ${{ github.event.client_payload.token }}
-      ref: ${{ github.event.client_payload.ref }}
-      create_issue: ${{ github.event.client_payload.create_issue }}
-      security_report_enabled: ${{ github.event.client_payload.security_report_enabled }}
+      profile_name: ${{ github.event.client_payload.app_payload.profile_name }}
+      policy_name: ${{ github.event.client_payload.app_payload.policy_name }}
+      modules_to_scan: ${{ github.event.client_payload.app_payload.modules_to_scan }}
+      owner: ${{ github.event.client_payload.app_payload.repository.owner }}
+      repo: ${{ github.event.client_payload.app_payload.repository.name }}
+      sha: ${{ github.event.client_payload.app_payload.sha }}
+      token: ${{ github.event.client_payload.app_payload.token }}
+      ref: ${{ github.event.client_payload.app_payload.ref }}
+      create_issue: ${{ github.event.client_payload.app_payload.create_issue }}
+      security_report_enabled: ${{ github.event.client_payload.app_payload.security_report_enabled }}
     secrets: inherit

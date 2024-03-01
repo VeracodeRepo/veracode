@@ -1,6 +1,6 @@
 name: Veracode - SAST/SCA Not Supported Repository
 
-run-name: Veracode - SAST/SCA Not Supported Repository - ${{ github.event.client_payload.repository.name }}
+run-name: Veracode - SAST/SCA Not Supported Repository - ${{ github.event.client_payload.app_payload.repository.name }}
 
 on:
   repository_dispatch:
@@ -11,11 +11,11 @@ jobs:
     uses: ./.github/workflows/veracode-check-run.yml
     with:
       check_run_name: ${{ github.workflow }}
-      head_sha: ${{ github.event.client_payload.sha }}
-      repositroy_owner: ${{ github.event.client_payload.repository.owner }}
-      repositroy_name: ${{ github.event.client_payload.repository.name }}
-      event_type: ${{ github.event.client_payload.event_type }}
-      github_token: ${{ github.event.client_payload.token }}
+      head_sha: ${{ github.event.client_payload.app_payload.sha }}
+      repositroy_owner: ${{ github.event.client_payload.app_payload.repository.owner }}
+      repositroy_name: ${{ github.event.client_payload.app_payload.repository.name }}
+      event_type: ${{ github.event.client_payload.app_payload.event_type }}
+      github_token: ${{ github.event.client_payload.app_payload.token }}
       run_id: ${{ github.run_id }}
        
   veracode-not-supported:
