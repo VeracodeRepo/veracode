@@ -34,7 +34,7 @@ veracode_static_scan:
   #If enabled, you will be able to view static findings as a security issue in GitHub.
   security_report_enabled: false
   create_issue: false
-  profile_name: ENTER_PROFILE_NAME
+  profile: ENTER_PROFILE_NAME
 
 veracode_sca_scan:   
   # Please only specify trigger:true for either push event or 
