@@ -64,7 +64,7 @@ jobs:
     if: contains(github.event.action, 'pipeline')
     uses: ./.github/workflows/veracode-pipeline-scan.yml
     with:
-      policy_name: ${{ github.event.client_payload.policy_name }}
+      policy_name: ${{ github.event.client_payload.user_config.policy_name }}
       security_report_enabled: ${{ github.event.client_payload.user_config.security_report_enabled }}
       owner: ${{ github.event.client_payload.repository.owner }}
       repo: ${{ github.event.client_payload.repository.name }}
@@ -79,8 +79,8 @@ jobs:
     if: contains(github.event.action, 'policy')
     uses: ./.github/workflows/veracode-policy-scan.yml
     with:
-      profile_name: ${{ github.event.client_payload.profile_name }}
-      policy_name: ${{ github.event.client_payload.policy_name }}
+      profile_name: ${{ github.event.client_payload.user_config.profile_name }}
+      policy_name: ${{ github.event.client_payload.user_config.policy_name }}
       modules_to_scan: ${{ github.event.client_payload.modules_to_scan }}
       owner: ${{ github.event.client_payload.repository.owner }}
       repo: ${{ github.event.client_payload.repository.name }}
