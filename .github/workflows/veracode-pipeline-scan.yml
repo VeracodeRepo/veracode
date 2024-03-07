@@ -82,6 +82,22 @@ jobs:
           ref: ${{ inputs.ref }}
           githubToken: ${{ inputs.token }}
 
+      - name: Veracode Pipeline Results
+        uses: veracode/workflow-app-helper@main
+        #uses: MitigationSupport/workflow-app-helper@main
+        #uses: testallrepos/workflow-app-helper@main
+        with:
+          action: preparePipelineResults
+          token: ${{ inputs.token }}
+          check_run_id: ${{ inputs.check_run_id }}
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+          appname: ${{ inputs.profile_name }}
+          source_repository: ${{ inputs.source_repository }}  
+          fail_checks_on_policy: false
+          fail_checks_on_error: false   
+          filter_mitigated_flaws: true
+
 # This step will import the flaws from the step above
   create-issues:
     needs: pipeline_scan
