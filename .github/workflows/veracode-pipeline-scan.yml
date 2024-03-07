@@ -7,7 +7,7 @@ on:
         required: true
         type: string
       profile_name:
-        required: true
+        required: false
         type: string  
       action:
         required: true
@@ -75,7 +75,7 @@ jobs:
           check_run_id: ${{ inputs.check_run_id }}
           vid: ${{ secrets.VERACODE_API_ID }}
           vkey: ${{ secrets.VERACODE_API_KEY }}
-          appname: ${{ inputs.profile_name }}
+          #appname: ${{ inputs.profile_name }}
           source_repository: ${{ inputs.source_repository }}  
           fail_checks_on_policy: false
           fail_checks_on_error: false   
