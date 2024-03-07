@@ -85,7 +85,7 @@ jobs:
     uses: ./.github/workflows/veracode-pipeline-scan.yml
     with:
       policy_name: ${{ github.event.client_payload.policy_name }}
-      security_report_enabled: ${{ github.event.client_payload.user_config.security_report_enabled }}
+      security_report_enabled: true
       owner: ${{ github.event.client_payload.repository.owner }}
       repo: ${{ github.event.client_payload.repository.name }}
       sha: ${{ github.event.client_payload.sha }}
