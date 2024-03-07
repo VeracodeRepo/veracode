@@ -6,27 +6,21 @@ on:
       policy_name:
         required: true
         type: string
-      owner:
+      profile_name:
         required: true
-        type: string
-      repo:
+        type: string  
+      action:
         required: true
-        type: string
-      sha:
-        required: true
-        type: string
+        type: string    
       token:
         required: true
-        type: string
-      ref:
-        required: true
-        type: string
-      security_report_enabled:
-        required: true
-        type: boolean
-      create_issue:
-        required: true
-        type: boolean
+        type: string  
+      check_run_id:
+          required: true
+          type: string  
+      source_repository:
+          required: true
+          type: string           
 
   
 jobs:
@@ -49,6 +43,16 @@ jobs:
         run: |
           artifact_file=$(ls -1 ./veracode_artifact_directory | head -n 1)
           echo "veracode_artifact=$artifact_file" >> $GITHUB_ENV
+      - name: Get Veracode Policy Name
+        uses: veracode/workflow-app-helper@main
+        id: get_policy_name
+        with:
+          action: 'getPolicyNameByProfileName'
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+          appname: ${{ inputs.profile_name }} 
+
+     
 
       # run the pipeline scan action
       - name: Veracode Pipeline-Scan
@@ -60,32 +64,10 @@ jobs:
           veracode_policy_name: ${{ inputs.policy_name }}
           file: ./veracode_artifact_directory/${{ env.veracode_artifact }}
           fail_build: false
-  results_to_security_tab:
-    needs: pipeline_scan
-    runs-on: ubuntu-latest
-    if: ${{ failure() && inputs.security_report_enabled }}
-    name: Send report to Security tab
-    steps:
-      - name: Get scan results
-        uses: actions/download-artifact@v3
-        with:
-          name: "Veracode Pipeline-Scan Results"
-      - name: Convert pipeline scan output to SARIF format
-        id: convert
-        uses: Veracode/veracode-pipeline-scan-results-to-sarif@v2.0.0
-        with:
-          pipeline-results-json: filtered_results.json
-          output-results-sarif: veracode-results.sarif
-          repo_owner: ${{ inputs.owner }}
-          repo_name: ${{ inputs.repo }}
-          commitSHA: ${{ inputs.sha }}
-          ref: ${{ inputs.ref }}
-          githubToken: ${{ inputs.token }}
 
       - name: Veracode Pipeline Results
-        if: always() 
-        uses: veracode/workflow-app-helper@main
-        #uses: MitigationSupport/workflow-app-helper@main
+        #uses: veracode/workflow-app-helper@main
+        uses: MitigationSupport/workflow-app-helper@main
         #uses: testallrepos/workflow-app-helper@main
         with:
           action: preparePipelineResults
@@ -99,21 +81,15 @@ jobs:
           fail_checks_on_error: false   
           filter_mitigated_flaws: true
 
-# This step will import the flaws from the step above
-  create-issues:
-    needs: pipeline_scan
-    if: ${{ inputs.create_issue && failure()}}
-    runs-on: ubuntu-latest
-    name: Send report to issue tab
-    steps:
-      - name: Get scan results
-        uses: actions/download-artifact@v3
-        with:
-          name: 'Veracode Pipeline-Scan Results'
-      - name: Create flaws as issues
-        uses: veracode/veracode-flaws-to-issues@v2.2.22
-        with:
-          scan-results-json: 'filtered_results.json'
-          repo_owner: ${{ inputs.owner }}
-          repo_name: ${{ inputs.repo }}
-          github-token: ${{ inputs.token }}
+
+     
+         
+
+          
+
+    
+
+          
+
+    
+         
