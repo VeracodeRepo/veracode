@@ -10,7 +10,7 @@ on:
         required: false
         type: string  
       action:
-        required: true
+        required: false
         type: string    
       token:
         required: true
