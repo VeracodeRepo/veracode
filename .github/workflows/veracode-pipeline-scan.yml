@@ -55,7 +55,7 @@ jobs:
      
 
       # run the pipeline scan action
-      - name: Veracode Pipeline-Scan
+      - name: Veracode Pipeline-Scan11
         id: pipeline-scan
         uses: veracode/Veracode-pipeline-scan-action@v1.0.10
         with:
