@@ -83,6 +83,7 @@ jobs:
           githubToken: ${{ inputs.token }}
 
       - name: Veracode Pipeline Results
+        if: always() 
         uses: veracode/workflow-app-helper@main
         #uses: MitigationSupport/workflow-app-helper@main
         #uses: testallrepos/workflow-app-helper@main
