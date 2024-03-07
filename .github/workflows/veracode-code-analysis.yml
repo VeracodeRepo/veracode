@@ -93,7 +93,7 @@ jobs:
       #ref: ${{ github.event.client_payload.user_config.ref }}
       source_repository: ${{ github.event.client_payload.repository.full_name }}
       check_run_id: ${{ needs.register.outputs.run_id }}
-      create_issue: true
+      #create_issue: true
     secrets: inherit
     
   policy_scan:
