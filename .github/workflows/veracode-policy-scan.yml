@@ -36,6 +36,9 @@ on:
       source_repository:
           required: true
           type: string 
+      check_run_id:
+          required: true
+          type: string      
 
 
 jobs:
@@ -75,46 +78,16 @@ jobs:
           include: ${{ inputs.modules_to_scan }}
           failbuild: true
 
-# This step will import the flaws from the step above
-  create-issues:
-    needs: policy_scan
-
-    if: ${{ inputs.create_issue && failure() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get flaw file
-        uses: actions/download-artifact@v3
+      - name: Veracode Policy Results
+        if: always() 
+        uses: veracode/workflow-app-helper@main
         with:
-          name: 'policy-flaws'
-          path: /tmp
-      - name: Create flaws as issues
-        uses: veracode/veracode-flaws-to-issues@addWorkflowAppSupport
-        with:
-          scan-results-json: '/tmp/policy_flaws.json'
-          repo_owner: ${{ inputs.owner }}
-          repo_name: ${{ inputs.repo }}
-          github-token: ${{ inputs.token }}
+          action: preparePolicyResults
+          token: ${{ inputs.token }}
+          check_run_id: ${{ inputs.check_run_id }}
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+          appname: ${{ inputs.source_repository }} 
+          source_repository: ${{ inputs.source_repository }} 
   
-  results_to_security_tab:
-    needs: policy_scan
-    runs-on: ubuntu-latest
-    if: ${{ failure() && inputs.security_report_enabled }}
-    name: Send policy scan report to Security tab
-    steps:
-      - name: Get scan results
-        uses: actions/download-artifact@v3
-        with:
-          name: policy-flaws
-          path: /tmp
-      - name: Convert policy scan output to SARIF format
-        id: convert
-        uses: Veracode/veracode-pipeline-scan-results-to-sarif@feature/DXS_254
-        with:
-          scan-type: policy
-          results-json: '/tmp/policy_flaws.json'
-          output-results-sarif: veracode-results.sarif
-          repo_owner: ${{ inputs.owner }}
-          repo_name: ${{ inputs.repo }}
-          commitSHA: ${{ inputs.sha }}
-          ref: ${{ inputs.ref }}
-          githubToken: ${{ inputs.token }}
+ 
