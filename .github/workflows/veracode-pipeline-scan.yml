@@ -43,7 +43,14 @@ jobs:
         run: |
           artifact_file=$(ls -1 ./veracode_artifact_directory | head -n 1)
           echo "veracode_artifact=$artifact_file" >> $GITHUB_ENV
-      
+      - name: Get Veracode Policy Name
+        uses: veracode/workflow-app-helper@main
+        id: get_policy_name
+        with:
+          action: 'getPolicyNameByProfileName'
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+          appname: ${{ inputs.source_repository }}
 
      
 
