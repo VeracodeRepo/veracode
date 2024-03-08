@@ -101,7 +101,7 @@ jobs:
     if: contains(github.event.action, 'policy')
     uses: ./.github/workflows/veracode-policy-scan.yml
     with:
-      profile_name: ${{ github.event.client_payload.user_config.profile_name }}
+      #profile_name: ${{ github.event.client_payload.user_config.profile_name }}
       policy_name: ${{ github.event.client_payload.policy_name }}
       modules_to_scan: ${{ github.event.client_payload.modules_to_scan }}
       owner: ${{ github.event.client_payload.repository.owner }}
@@ -111,4 +111,5 @@ jobs:
       ref: ${{ github.event.client_payload.user_config.ref }}
       create_issue: true
       security_report_enabled: true
+      source_repository: ${{ github.event.client_payload.repository.full_name }}
     secrets: inherit
