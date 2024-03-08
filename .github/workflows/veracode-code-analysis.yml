@@ -31,51 +31,7 @@ jobs:
       github_token: ${{ github.event.client_payload.token }}
       run_id: ${{ github.run_id }}
 
-  validations:
-    needs: register
-    runs-on: ubuntu-latest
-    name: Validations
-    steps:
-      - name: Verify Veracode API credentials
-        id: verify_api_creds
-        uses: veracode/github-actions-integration-helper@feature/DXS-124
-        with:
-          action: validateVeracodeApiCreds
-          token: ${{ github.event.client_payload.token }}
-          vid: ${{ secrets.VERACODE_API_ID }}
-          vkey: ${{ secrets.VERACODE_API_KEY }}
-          appname: ${{ github.event.client_payload.user_config.profile_name }}
-          #appname: ${{ github.event.client_payload.repository.full_name }}
-          source_repository: ${{ github.event.client_payload.repository.full_name }}
-          check_run_id: ${{ needs.register.outputs.run_id }}
-      
-      - name: Verify Policy name
-        id: verify_policy_name
-        if: success()
-        uses: veracode/github-actions-integration-helper@feature/DXS-124
-        with:
-          action: validatePolicyName
-          token: ${{ github.event.client_payload.token }}
-          vid: ${{ secrets.VERACODE_API_ID }}
-          vkey: ${{ secrets.VERACODE_API_KEY }}
-          appname: ${{ github.event.client_payload.user_config.profile_name }}
-         # appname: test07032024
-          source_repository: ${{ github.event.client_payload.repository.full_name }}
-          check_run_id: ${{ needs.register.outputs.run_id }}
-          policyname: ${{ github.event.client_payload.policy_name }}
-          path: ${{ github.event.client_payload.annotationObj.path }}
-          start_line: ${{ github.event.client_payload.annotationObj.start_line }}
-          end_line: ${{ github.event.client_payload.annotationObj.end_line }}
-          break_build_policy_findings: ${{github.event.client_payload.break_build_policy_findings }}
- 
-  build:
-    needs: validations
-    uses: ./.github/workflows/veracode-build-artifact-for-scanning.yml
-    with:
-      repository: ${{ github.event.client_payload.repository.full_name }}
-      ref: ${{ github.event.client_payload.sha }}
-      token: ${{ github.event.client_payload.token }}
-      event_name: ${{ github.event.action }}
+  
 
 
   pipeline_scan:
