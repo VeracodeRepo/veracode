@@ -109,6 +109,6 @@ jobs:
       sha: ${{ github.event.client_payload.sha }}
       token: ${{ github.event.client_payload.token }}
       ref: ${{ github.event.client_payload.user_config.ref }}
-      create_issue: ${{ github.event.client_payload.user_config.create_issue }}
-      security_report_enabled: ${{ github.event.client_payload.user_config.security_report_enabled }}
+      create_issue: true
+      security_report_enabled: true
     secrets: inherit
