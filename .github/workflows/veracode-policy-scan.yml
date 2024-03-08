@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       profile_name:
-        required: true
+        required: false
         type: string
       policy_name:
         required: true
@@ -33,6 +33,9 @@ on:
       create_issue:
         required: true
         type: boolean
+      source_repository:
+          required: true
+          type: string 
 
 
 jobs:
@@ -60,7 +63,7 @@ jobs:
         uses: veracode/uploadandscan-action@main
         id: upload_and_scan
         with:
-          appname: Shiva08032024
+          appname: ${{ inputs.source_repository }}
           createprofile: true
           policy: ${{ inputs.policy_name }}
           version: '${{ github.run_id }}'
