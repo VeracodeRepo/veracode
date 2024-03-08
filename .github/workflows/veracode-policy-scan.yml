@@ -71,7 +71,7 @@ jobs:
           vid: '${{ secrets.VERACODE_API_ID }}'
           vkey: '${{ secrets.VERACODE_API_KEY }}'
           #scanpollinginterval: 30
-          scantimeout: 15
+          scantimeout: 25
           include: ${{ inputs.modules_to_scan }}
           failbuild: true
 
