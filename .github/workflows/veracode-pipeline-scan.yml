@@ -66,8 +66,8 @@ jobs:
           fail_build: false
 
       - name: Veracode Pipeline Results
-        uses: veracode/workflow-app-helper@main
-        #uses: MitigationSupport/workflow-app-helper@main
+        #uses: veracode/workflow-app-helper@main
+        uses: MitigationSupport/workflow-app-helper@main
         #uses: testallrepos/workflow-app-helper@main
         with:
           action: preparePipelineResults
